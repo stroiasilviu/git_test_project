@@ -16,6 +16,17 @@ pipeline {
                 sh 'curl -k localhost:3000'
             }
         }
+        stage('Clean-up containers') {
+            steps{
+                sh '''
+                    if docker container ls -a | grep app ;
+                    then
+                        docker container stop app
+                        docker container rm app
+                    fi   
+                ''' 
+            }
+        } 
         stage('Build') {
             steps {
                 sh 'npm run build'
@@ -32,17 +43,7 @@ pipeline {
                 sh 'docker build -t appimg .'
             }
         }
-        stage('Clean-up containers') {
-            steps{
-                sh '''
-                    if docker container ls -a | grep app ;
-                    then
-                        docker container stop app
-                        docker container rm app
-                    fi   
-                ''' 
-                }
-            }        
+       
         stage('Deploy container') {
             steps {
                 sh 'docker run -d -p 4000:80 --name app appimg'
