@@ -35,9 +35,9 @@ pipeline {
         stage('Clean-up containers') {
             steps{
                 script {
-                    def output = sh(returnStdout: true, script: 'docker container ls -a | grep app')
+                    def output = sh(returnStdout: true, script: "/bin/bash -c 'docker container ls -a | grep app'")
                     echo "Output: ${output}"
-                    if (output == null){
+                    if (output != null){
                         sh 'docker container stop app'
                         sh 'docker container rm app'    
                     } else {
