@@ -1,12 +1,5 @@
-FROM ubuntu:latest
+FROM nginx:latest
 
-RUN apt-get update \
-    && apt-get install -y nodejs npm \
-    && mkdir /app \
-    && npm install -g serve
+COPY build /usr/share/nginx/html
 
-COPY build/* /app
-
-EXPOSE 80
-
-CMD serve -s /app
+ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
