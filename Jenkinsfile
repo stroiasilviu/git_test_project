@@ -34,19 +34,15 @@ pipeline {
         }
         stage('Clean-up containers') {
             steps{
-                script {
-                    def output = sh(returnStdout: true, script: "/bin/bash -c 'docker container ls -a | grep app'")
-                    echo "Output: ${output}"
-                    if (output != null){
-                        sh 'docker container stop app'
-                        sh 'docker container rm app'    
-                    } else {
-                        echo "skipping cleanup"
-                    }
+                sh '''
+                    if docker container ls -a | grep app ;
+                    then
+                        docker container stop app
+                        docker container rm app
+                    fi   
+                ''' 
                 }
-            }
-
-            }
+            }        
         stage('Deploy container') {
             steps {
                 sh 'docker run -d -p 4000:80 --name app appimg'
