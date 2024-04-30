@@ -21,7 +21,24 @@ pipeline {
                 sh 'npm run build'
                 sh 'tar -czvf build.tar.gz build/*'
                 archiveArtifacts artifacts: 'build.tar.gz', followSymlinks: false
+                sh 'docker build -t appimg .'
+                sh 'docker run -d -p 4000:80 --name app appimg'
+                sleep 10
+                sh 'curl -k localhost:4000'
             }
         }
+        stage('Build docker image') {
+            steps{
+                sh 'docker build -t appimg .'
+            }
+        }
+        stage('Deploy container') {
+            steps {
+                sh 'docker run -d -p 4000:80 --name app appimg'
+                sleep 10
+                sh 'curl -k localhost:4000'
     }
+        }
+    }
+
 }
