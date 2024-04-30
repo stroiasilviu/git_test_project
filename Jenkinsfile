@@ -36,6 +36,7 @@ pipeline {
             steps{
                 script {
                     def output = sh(returnStdout: true, script: 'docker container ls -a | grep app')
+                    echo "Output: ${output}"
                     if (output){
                         sh 'docker container stop app'
                         sh 'docker container rm app'    
@@ -44,13 +45,12 @@ pipeline {
             }
 
             }
-        }
         stage('Deploy container') {
             steps {
                 sh 'docker run -d -p 4000:80 --name app appimg'
                 sleep 10
                 sh 'curl -k localhost:4000'
-    }
+            }
         }
     }
-
+}
